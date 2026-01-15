@@ -8,15 +8,20 @@
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.0/dist/mindar-image-aframe.prod.js"></script>
 </head>
 
-<body style="margin:0;overflow:hidden;background:black;">
+<body style="margin:0; overflow:hidden; background:black;">
 
-<div id="hint" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:white;font-family:sans-serif;z-index:10;">
-  Tap once, then point at the poster
+<!-- Simple UI overlay -->
+<div id="ui" style="position:fixed; inset:0; display:flex; flex-direction:column; gap:12px; align-items:center; justify-content:center; color:white; font-family:sans-serif; z-index:10; pointer-events:auto;">
+  <div id="status" style="opacity:0.9;">Tap “Enable Video”, then point at the poster</div>
+  <button id="enable" style="font-size:18px; padding:12px 16px; border-radius:10px; border:0;">
+    Enable Video
+  </button>
 </div>
 
-<a-scene mindar-image="imageTargetSrc: poster.mind;"
-         vr-mode-ui="enabled:false"
-         device-orientation-permission-ui="enabled:false">
+<a-scene
+  mindar-image="imageTargetSrc: poster.mind;"
+  vr-mode-ui="enabled:false"
+  device-orientation-permission-ui="enabled:false">
 
   <a-assets>
     <video
@@ -28,3 +33,47 @@
       playsinline
       webkit-playsinline
       crossorigin="anonymous">
+    </video>
+  </a-assets>
+
+  <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
+
+  <a-entity id="target" mindar-image-target="targetIndex: 0">
+    <a-video id="vplane" src="#video" width="1" height="0.56" position="0 0 0"></a-video>
+  </a-entity>
+
+</a-scene>
+
+<script>
+  const video = document.getElementById("video");
+  const target = document.getElementById("target");
+  const ui = document.getElementById("ui");
+  const status = document.getElementById("status");
+  const enableBtn = document.getElementById("enable");
+
+  let videoEnabled = false;
+
+  // Helpful: show loading progress states
+  video.addEventListener("loadstart", () => status.innerText = "Loading video…");
+  video.addEventListener("canplay", () => {
+    if (!videoEnabled) status.innerText = 'Video loaded. Tap “Enable Video”.';
+  });
+
+  // Must be a user gesture on mobile
+  enableBtn.addEventListener("click", async () => {
+    try {
+      status.innerText = "Enabling video…";
+      await video.play();          // unlock + start
+      video.pause();               // we’ll start it on targetFound
+      video.currentTime = 0;
+      videoEnabled = true;
+      status.innerText = "Video enabled. Looking for poster…";
+      ui.style.background = "rgba(0,0,0,0.25)";
+      enableBtn.style.display = "none";
+    } catch (e) {
+      status.innerText = "Couldn’t enable video. Try tapping again.";
+      console.log(e);
+    }
+  });
+
+  target.addEventListener("targ
