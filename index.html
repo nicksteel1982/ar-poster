@@ -4,20 +4,15 @@
   <meta charset="utf-8">
   <title>AR Poster</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.0/dist/mindar-image.prod.js"></script>
-  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/aframe@1.4.2/dist/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.0/dist/mindar-image-aframe.prod.js"></script>
 </head>
-<body style="margin:0;overflow:hidden;background:black;">
 
-<div id="loading" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:white;font-family:sans-serif;z-index:10;">
-  Tap to start camera
-</div>
+<body style="margin:0;overflow:hidden;">
 
-<a-scene id="scene"
-         mindar-image="imageTargetSrc: poster.mind; autoStart: false;"
+<a-scene mindar-image="imageTargetSrc: poster.mind;"
          vr-mode-ui="enabled:false"
-         device-orientation-permission-ui="enabled:false"
-         embedded>
+         device-orientation-permission-ui="enabled:false">
 
   <a-assets>
     <video id="video" src="overlay.mp4" loop muted playsinline crossorigin="anonymous"></video>
@@ -32,29 +27,9 @@
 </a-scene>
 
 <script>
-  const sceneEl = document.querySelector('#scene');
   const video = document.querySelector('#video');
-  const loading = document.getElementById('loading');
-
-  sceneEl.addEventListener("loaded", () => {
-    console.log("Scene loaded");
-  });
-
-  loading.addEventListener('click', async () => {
-    loading.innerText = "Starting camera...";
-    const mindarSystem = sceneEl.systems["mindar-image-system"];
-
-    if (!mindarSystem) {
-      loading.innerText = "AR system not ready yet...";
-      return;
-    }
-
-    await mindarSystem.start();
-    await video.play();
-    loading.style.display = "none";
-  });
+  document.addEventListener('click', () => video.play());
 </script>
-
 
 </body>
 </html>
