@@ -8,28 +8,23 @@
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.0/dist/mindar-image-aframe.prod.js"></script>
 </head>
 
-<body style="margin:0;overflow:hidden;">
+<body style="margin:0;overflow:hidden;background:black;">
+
+<div id="hint" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:white;font-family:sans-serif;z-index:10;">
+  Tap once, then point at the poster
+</div>
 
 <a-scene mindar-image="imageTargetSrc: poster.mind;"
          vr-mode-ui="enabled:false"
          device-orientation-permission-ui="enabled:false">
 
   <a-assets>
-    <video id="video" src="overlay.mp4" loop muted playsinline crossorigin="anonymous"></video>
-  </a-assets>
-
-  <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
-
-  <a-entity mindar-image-target="targetIndex: 0">
-    <a-video src="#video" width="1" height="0.56" position="0 0 0"></a-video>
-  </a-entity>
-
-</a-scene>
-
-<script>
-  const video = document.querySelector('#video');
-  document.addEventListener('click', () => video.play());
-</script>
-
-</body>
-</html>
+    <video
+      id="video"
+      src="overlay.mp4"
+      preload="auto"
+      loop
+      muted
+      playsinline
+      webkit-playsinline
+      crossorigin="anonymous">
