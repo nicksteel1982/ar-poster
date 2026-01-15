@@ -36,13 +36,25 @@
   const video = document.querySelector('#video');
   const loading = document.getElementById('loading');
 
+  sceneEl.addEventListener("loaded", () => {
+    console.log("Scene loaded");
+  });
+
   loading.addEventListener('click', async () => {
     loading.innerText = "Starting camera...";
-    await sceneEl.systems["mindar-image-system"].start();
-    video.play();
+    const mindarSystem = sceneEl.systems["mindar-image-system"];
+
+    if (!mindarSystem) {
+      loading.innerText = "AR system not ready yet...";
+      return;
+    }
+
+    await mindarSystem.start();
+    await video.play();
     loading.style.display = "none";
   });
 </script>
+
 
 </body>
 </html>
